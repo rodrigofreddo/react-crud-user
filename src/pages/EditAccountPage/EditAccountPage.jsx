@@ -41,6 +41,13 @@ class EditAccountPage extends Component {
                 mail : user.mail,
             });
         });
+
+        //get all user's to authenticate the password
+        axios.get(`http://localhost:3000/users`)
+          .then(res => {
+            const users = res.data;
+            this.setState({ users });
+        })
     }
 
     handleInputChange(event) {
@@ -103,20 +110,18 @@ class EditAccountPage extends Component {
     
     handleEditUser() {
         let correctPass = false;
-
+console.log(this.state.user.id, this.state.user.password, this.state.oldPassword);
         //check already exist this username with this pass..
-        for (var i = 0; i < this.state.users.length; i++) {
-            if (this.state.users[i].username === this.state.username && this.state.users[i].password === this.state.password) {
-                //if has, set the currently user logged and go to the user's dashboard
-                correctPass = true;
+        if (this.state.user.password === this.state.oldPassword) {
+            //if has, set the currently user logged and go to the user's dashboard
+            correctPass = true;
 
-                this.setState({
-                    idUser: this.state.users[i].id,
-                    redirect: true
-                })
-            } else {    
-                this.setState({msg: "That username with this password doesn't exist"});
-            }
+            this.setState({
+                idUser: this.state.user.id,
+                redirect: true
+            })
+        } else {    
+            this.setState({msg: "That username with this password doesn't exist"});
         }
 
         if (this.state.username.length > 0 && correctPass) {
@@ -124,15 +129,15 @@ class EditAccountPage extends Component {
                 if (!this.state.msgErrors.length) {
 
                     //widhout encapsulate, just put the direct obj, that way don't mess up with the auto incremment
-                    axios.put(`http://localhost:3000/users/${this.props.userID}`,{
+                    axios.put(`http://localhost:3000/users/${this.state.user.id}`,{
                         username: this.state.username,
                         fullname: this.state.fullname,
-                        password: this.state.password,
+                        password: (this.state.password.length ? this.state.password : this.state.oldPassword),
                         confirmPassword: this.state.confirmPassword,
                         mail: this.state.mail 
                     }).then(res => {
                         console.log(`The user ${res.data.username} has been added`);
-                        this.setState({ toHomePage: true });
+                        this.setState({ toDashboard: true });
                     });    
                     
                 } else {
@@ -142,14 +147,15 @@ class EditAccountPage extends Component {
                 this.setState({msgUsername: "The username already exist's, please write another"})
             }
         } else {
-            this.setState({msgErrors: "Please fill the required field's"})
+            this.setState({msgErrors: "The username or your password is not correct"})
         }
     }
 
     render() {
-        if (this.state.toHomePage) {
+        if (this.state.toDashboard) {
             return <Redirect to={{
-                pathname: "/"
+                pathname: "/dashboard/",
+                state: {userID: this.state.user.id}
             }} />
         } else {
             return(
@@ -197,7 +203,7 @@ class EditAccountPage extends Component {
                             autoComplete="off" 
                             placeholder="Write your password like Fg8horseGo192@!" 
                             name="oldPassword"
-                            value={this.state.password}
+                            value={this.state.oldPassword}
                             onChange={this.handleInputChange}
                         />
                         
