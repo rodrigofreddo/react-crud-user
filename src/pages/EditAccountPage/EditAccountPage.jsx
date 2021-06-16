@@ -68,12 +68,13 @@ class EditAccountPage extends Component {
             if (this.state.users[i].username === event.target.value) {
                 this.setState({
                     msgUsername: 'That username already has been used', 
-                    alreadyExist: false
+                    alreadyExist: true
                 });
                 break;
             } else {
                 this.setState({
-                    msgUsername: '', 
+                    msgUsername: '',
+                    alreadyExist: false 
                 })
             }
         }
@@ -83,26 +84,29 @@ class EditAccountPage extends Component {
 
         const pass = event.target.value;
 
-        if (pass.length < 8) { //Verify if the pass has more then 8 characters
+        if (pass.length > 0) {
         
-            this.setState({msgErrors: "That password is too short"});
+            if (pass.length < 8) { //Verify if the pass has more then 8 characters
+            
+                this.setState({msgErrors: "That password is too short"});
 
-        } else if (!/[0-9]/.test(pass)) { //Verify if the pass has numbers
+            } else if (!/[0-9]/.test(pass)) { //Verify if the pass has numbers
+                
+                this.setState({msgErrors: "That password doesn't have numbers"});
+                
+            } else if (!/[-!$%^&*()_+|~=`{}[\]:";'<>?,./]/.test(pass)) { //Verify if the pass has symbols
             
-            this.setState({msgErrors: "That password doesn't have numbers"});
+                this.setState({msgErrors: "it's required at least one symbol at the password"});
             
-        } else if (!/[-!$%^&*()_+|~=`{}[\]:";'<>?,./]/.test(pass)) { //Verify if the pass has symbols
-        
-            this.setState({msgErrors: "it's required at least one symbol at the password"});
-        
-        } else {  
-        
-            //check if the pass is the same..
-            if (pass !== this.state.password || pass !== this.state.passwordConfirm) {
-                this.setState({msgErrors: "It's not the same"});
-            } else {
-                //if yes, remove the error message
-                this.setState({msgErrors: ''});
+            } else {  
+            
+                //check if the pass is the same..
+                if (pass !== this.state.password || pass !== this.state.passwordConfirm) {
+                    this.setState({msgErrors: "It's not the same", itsDifferent: true});
+                } else {
+                    //if yes, remove the error message
+                    this.setState({msgErrors: '', itsDifferent: false});
+                }
             }
         }
     }
@@ -110,7 +114,6 @@ class EditAccountPage extends Component {
     
     handleEditUser() {
         let correctPass = false;
-console.log(this.state.user.id, this.state.user.password, this.state.oldPassword);
         //check already exist this username with this pass..
         if (this.state.user.password === this.state.oldPassword) {
             //if has, set the currently user logged and go to the user's dashboard
@@ -124,9 +127,11 @@ console.log(this.state.user.id, this.state.user.password, this.state.oldPassword
             this.setState({msg: "That username with this password doesn't exist"});
         }
 
+        console.log(this.state.user.id);
+
         if (this.state.username.length > 0 && correctPass) {
             if (!this.state.alreadyExist) {
-                if (!this.state.msgErrors.length) {
+                if (this.state.passwordConfirm.length > 0 || !this.state.itsDifferent) {
 
                     //widhout encapsulate, just put the direct obj, that way don't mess up with the auto incremment
                     axios.put(`http://localhost:3000/users/${this.state.user.id}`,{
@@ -136,7 +141,7 @@ console.log(this.state.user.id, this.state.user.password, this.state.oldPassword
                         confirmPassword: this.state.confirmPassword,
                         mail: this.state.mail 
                     }).then(res => {
-                        console.log(`The user ${res.data.username} has been added`);
+                        console.log(`The user ${res.data.username} has been edited`);
                         this.setState({ toDashboard: true });
                     });    
                     
@@ -144,7 +149,7 @@ console.log(this.state.user.id, this.state.user.password, this.state.oldPassword
                     this.setState({msgErrors: "The password didn't has been confirmed"})
                 }
             } else {
-                this.setState({msgUsername: "The username already exist's, please write another"})
+                this.setState({msgErrors: "The username already exist's, please write another"})
             }
         } else {
             this.setState({msgErrors: "The username or your password is not correct"})
@@ -155,7 +160,7 @@ console.log(this.state.user.id, this.state.user.password, this.state.oldPassword
         if (this.state.toDashboard) {
             return <Redirect to={{
                 pathname: "/dashboard/",
-                state: {userID: this.state.user.id}
+                state: {idUser: this.state.user.id}
             }} />
         } else {
             return(
