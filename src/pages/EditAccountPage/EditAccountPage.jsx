@@ -127,8 +127,6 @@ class EditAccountPage extends Component {
             this.setState({msg: "That username with this password doesn't exist"});
         }
 
-        console.log(this.state.user.id);
-
         if (this.state.username.length > 0 && correctPass) {
             if (!this.state.alreadyExist) {
                 if (this.state.passwordConfirm.length > 0 || !this.state.itsDifferent) {
