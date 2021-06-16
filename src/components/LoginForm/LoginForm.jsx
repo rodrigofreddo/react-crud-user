@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './LoginForm.css'
 import axios from 'axios'; 
 import ShowMessage from '../ShowMessage/ShowMessage';
 import { Link, Redirect } from 'react-router-dom';
@@ -38,20 +39,22 @@ class LoginForm extends Component {
     }
 
     handleLogin() {
-        //check already exist this username with this pass..
-        for (var i = 0; i < this.state.users.length; i++) {
-            if (this.state.users[i].username === this.state.username && this.state.users[i].password === this.state.password) {
-                //if has, set the currently user logged and go to the user's dashboard
-                
-                this.setState({
-                    idUser: this.state.users[i].id,
-                    redirect: true
-                })
-            } else {    
-                this.setState({
-                    msg: "That username with this password doesn't exist"
-                });
+        if (this.state.users !== undefined) {
+            //check already exist this username with this pass..
+            for (var i = 0; i < this.state.users.length; i++) {
+                if (this.state.users[i].username === this.state.username && this.state.users[i].password === this.state.password) {
+                    //if has, set the currently user logged and go to the user's dashboard
+                    
+                    this.setState({
+                        idUser: this.state.users[i].id,
+                        redirect: true
+                    })
+                } else {    
+                    this.setState({msg: "That username with this password doesn't exist"});
+                }
             }
+        } else {
+            this.setState({msg: "The API Server is down, please try again later"});
         }
     }
     
@@ -64,25 +67,28 @@ class LoginForm extends Component {
             }} />
         } else { //otherwise, render the form
             return (
-                <section>
+                <section className="LoginForm">
+                    <h1 className="title">{ this.props.title }</h1>
                     <form>
-                        <label>
-                        Username
+                        <label htmlFor="username">Username</label>
                         <input
                             name="username"
                             type="text"
                             value={this.state.username}
-                            onChange={this.handleInputChange} />
-                        </label>
-                        <br />
-                        <label>
-                        Password
+                            onChange={this.handleInputChange} 
+                            placeholder="Write your username"
+                        />
+                        
+                        <label htmlFor="username">Password</label>
+                        
                         <input
                             name="password"
                             type="password"
                             value={this.state.password}
-                            onChange={this.handleInputChange} />
-                        </label>
+                            onChange={this.handleInputChange} 
+                            placeholder="Write your password"
+                        />
+                        
                     </form>
 
                     <div className="msg-text">
@@ -91,10 +97,10 @@ class LoginForm extends Component {
                         
                     </div>
 
-                    <div className="justify-content-between">
-                        <button className="btn-primary" onClick={this.handleLogin}>Sigh In</button>
+                    <div className="wrapper-btns">
+                        <button type="button" className="btn btn-info" onClick={this.handleLogin}>Sigh In</button>
                         <Link to="/create-account">
-                            <button className="btn-secondary">Sigh Up</button>
+                            <button type="button" className="btn btn-secondary">Sigh Up</button>
                         </Link>
                     </div>
 

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Link, Redirect } from 'react-router-dom';
+import './DashboardPage.css'
 
 class DashboardPage extends Component {
     constructor(props) {
@@ -39,7 +40,7 @@ class DashboardPage extends Component {
             return <Redirect to="/" />
         } else {
             return(
-                <section>
+                <section className="Dashboard">
                     <h1 className="title">{ this.state.user.username }'s Dashboard</h1>
                     <ul>
                         <li>Full name: { this.state.user.fullname }</li>
@@ -47,15 +48,22 @@ class DashboardPage extends Component {
                         <li>Username: { this.state.user.username }</li>
                     </ul>
 
-                    <Link to="/edit-account">
-                        <button className="btn-primary">Edit</button>
-                    </Link>
                     
-                    <button onClick={this.handleDelete} className="btn-error">Deletar</button>
-                    
-                    <Link to="/">
-                        <button className="btn-secondary">Sigh Out</button>
-                    </Link>
+                    <div className="wrapper-btns">
+                        
+                        <Link to={{
+                            pathname: '/edit-account',
+                            state: { idUser: this.state.user.id }
+                        }}>
+                            <button type="button" className="btn btn-info">Edit</button>
+                        </Link>
+                        
+                        <button onClick={this.handleDelete} type="button" className="btn btn-danger">Deletar</button>
+                        
+                        <Link to="/">
+                            <button type="button" className="btn btn-secondary">Sigh Out</button>
+                        </Link>
+                    </div>
                     
                 </section>
             );

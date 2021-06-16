@@ -1,10 +1,10 @@
 import './App.css';
 import { BrowserRouter as Router, Route} from 'react-router-dom';
 
-import HomePage from './pages/HomePage';
-import DashboardPage from './pages/DashboardPage';
-import CreateAccountPage from './pages/CreateAccountPage';
-import EditAccountPage from './pages/EditAccountPage';
+import HomePage from './pages/HomePage/HomePage';
+import DashboardPage from './pages/DashboardPage/DashboardPage';
+import CreateAccountPage from './pages/CreateAccountPage/CreateAccountPage';
+import EditAccountPage from './pages/EditAccountPage/EditAccountPage';
 
 function App() {
   return (
@@ -17,9 +17,7 @@ function App() {
         <Route path='/create-account'>
           <CreateAccountPage />
         </Route>
-        <Route path="edit-account/:id">
-          <EditAccountPage />
-        </Route>
+        <Route path="/edit-account" render={(props) => <EditAccountPage {...props}/>}/>
       </Router>
     </div>
   );
