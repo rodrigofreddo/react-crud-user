@@ -108,6 +108,9 @@ class CreateAccountPage extends Component {
                     }).then(res => {
                         console.log(`The user ${res.data.username} has been added`);
                         this.setState({ toHomePage: true });
+                    }).catch(error => {
+                        console.log(error)
+                        this.setState({msgErrors: "The API Server is down, please try again later"});
                     });    
                     
                 } else {
