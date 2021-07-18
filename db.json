@@ -1,0 +1,11 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "fullname": "Rodrigo Zamberlan Freddo",
+      "username": "Rodrigo",
+      "mail": "rodrigo@mail.com",
+      "password": "As123123123!"
+    }
+  ]
+}

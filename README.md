@@ -1,6 +1,9 @@
-# Getting Started with Create React App
+# Getting up the API using axios
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Execute this commands at the terminal to connect with the api
+### `npm install -g json-server`
+### `npm install axios`
+### `json-server --watch db.json`
 
 ## Available Scripts
 
